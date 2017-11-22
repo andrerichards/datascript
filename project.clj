@@ -8,7 +8,9 @@
     [org.clojure/clojure "1.7.0" :scope "provided"]
     [org.clojure/clojurescript "1.7.228" :scope "provided"]
   ]
-  
+
+  :java-source-paths ["src"]
+
   :plugins [
     [lein-cljsbuild "1.1.5"]
   ]

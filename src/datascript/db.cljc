@@ -5,7 +5,8 @@
     [datascript.arrays :as da]
     [datascript.btset :as btset])
   #?(:cljs (:require-macros [datascript.db :refer [case-tree combine-cmp raise defrecord-updatable cond-let]]))
-  (:refer-clojure :exclude [seqable?]))
+  (:refer-clojure :exclude [seqable?])
+  #?(:clj (:import (datascript.java Database))))
 
 ;; ----------------------------------------------------------------------------
 
@@ -386,6 +387,7 @@
 (defn- ^:declared validate-attr [attr at])
 (defn- ^:declared components->pattern [db index cs])
 (defn ^:declared indexing? [db attr])
+(defn ^:declared entid [db eid])
 
 (defrecord-updatable DB [schema eavt aevt avet max-eid max-tx rschema hash]
   #?@(:cljs
@@ -404,7 +406,8 @@
        clojure.lang.IPersistentCollection
                             (count [db]         (count eavt))
                             (equiv [db other]   (equiv-db db other))
-                            (empty [db]         (empty-db schema))])
+                            (empty [db]         (empty-db schema))
+       Database (entid [db entityId] (entid db entityId))])
 
   IDB
   (-schema [db] (.-schema db))
