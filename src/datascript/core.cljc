@@ -48,10 +48,9 @@
 (defn ^:declared db? [x])
 (def             db? db/db?)
 
+(defn ^:declared is-filtered  [x])
+(def             is-filtered  db/is-filtered)
 (def ^:const tx0 db/tx0)
-
-(defn is-filtered [x]
-  (instance? FilteredDB x))
 
 (defn filter [db pred]
   {:pre [(db/db? db)]}
@@ -61,23 +60,6 @@
           orig-db   (.-unfiltered-db fdb)]
       (FilteredDB. orig-db #(and (orig-pred %) (pred orig-db %)) (atom 0)))
     (FilteredDB. db #(pred db %) (atom 0))))
-
-(defn with
-  ([db tx-data] (with db tx-data nil))
-  ([db tx-data tx-meta]
-    {:pre [(db/db? db)]}
-    (if (is-filtered db)
-      (throw (ex-info "Filtered DB cannot be modified" {:error :transaction/filtered}))
-      (db/transact-tx-data (db/map->TxReport
-                             { :db-before db
-                               :db-after  db
-                               :tx-data   []
-                               :tempids   {}
-                               :tx-meta   tx-meta}) tx-data))))
-
-(defn db-with [db tx-data]
-  {:pre [(db/db? db)]}
-  (:db-after (with db tx-data)))
 
 (defn datoms
   ([db index]             {:pre [(db/db? db)]} (db/-datoms db index []))
@@ -99,6 +81,10 @@
 
 (defn ^:declared entid [db eid])
 (def             entid db/entid)
+(defn ^:declared with  [db tx-data])
+(def             with  db/with)
+(defn ^:declared db-with [db tx-data])
+(def             db-with db/db-with)
 
 ;; Conn
 

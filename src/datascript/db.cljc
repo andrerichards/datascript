@@ -388,6 +388,7 @@
 (defn- ^:declared components->pattern [db index cs])
 (defn ^:declared indexing? [db attr])
 (defn ^:declared entid [db eid])
+(defn ^:declared db-with [db tx-data])
 
 (defrecord-updatable DB [schema eavt aevt avet max-eid max-tx rschema hash]
   #?@(:cljs
@@ -407,7 +408,8 @@
                             (count [db]         (count eavt))
                             (equiv [db other]   (equiv-db db other))
                             (empty [db]         (empty-db schema))
-       Database (entid [db entityId] (entid db entityId))])
+       Database             (entid [db entityId] (entid db entityId))
+                            (with  [db tx-data]  (db-with db tx-data))])
 
   IDB
   (-schema [db] (.-schema db))
@@ -1178,3 +1180,22 @@
                 {:error :transact/syntax, :tx-data entity})
        ))))
 
+(defn is-filtered [x]
+  (instance? FilteredDB x))
+
+(defn with
+  ([db tx-data] (with db tx-data nil))
+  ([db tx-data tx-meta]
+   {:pre [(db? db)]}
+   (if (is-filtered db)
+     (throw (ex-info "Filtered DB cannot be modified" {:error :transaction/filtered}))
+     (transact-tx-data (map->TxReport
+                         { :db-before db
+                          :db-after  db
+                          :tx-data   []
+                          :tempids   {}
+                          :tx-meta   tx-meta}) tx-data))))
+
+(defn db-with [db tx-data]
+  {:pre [(db? db)]}
+  (:db-after (with db tx-data)))
