@@ -1,14 +1,16 @@
-(defproject datascript "0.16.3"
-  :description "An implementation of Datomic in-memory database and Datalog query engine in ClojureScript"
+(defproject datascript-aot "0.16.3"
+  :description "Adds AOT compilation to DataScript (an implementation of Datomic in-memory database and Datalog query engine in ClojureScript), to make it easier to use from Java"
   :license {:name "Eclipse"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :url "https://github.com/tonsky/datascript"
+  :url "https://github.com/andrerichards/datascript"
   
   :dependencies [
     [org.clojure/clojure "1.7.0" :scope "provided"]
     [org.clojure/clojurescript "1.7.228" :scope "provided"]
   ]
-  
+
+  :aot [datascript.db]
+
   :plugins [
     [lein-cljsbuild "1.1.5"]
   ]
