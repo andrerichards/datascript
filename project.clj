@@ -1,4 +1,4 @@
-(defproject datascript-aot "0.16.3"
+(defproject org.clojars.azuzu/datascript "0.16.3"
   :description "Adds AOT compilation to DataScript (an implementation of Datomic in-memory database and Datalog query engine in ClojureScript), to make it easier to use from Java"
   :license {:name "Eclipse"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
